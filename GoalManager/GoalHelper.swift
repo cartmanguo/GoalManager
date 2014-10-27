@@ -95,7 +95,7 @@ class GoalHelper: NSObject {
 
     }
     
-    func saveGoalToDatabase(goal:Goal)
+    func saveGoalToDatabase(goal:Goal,completeHandler:(result:Bool)->Void)
     {
         var fmResult = userDatabase?.executeQuery("SELECT COUNT(*) FROM SQLITE_MASTER WHERE TYPE='table' AND NAME='myGoals'", withParameterDictionary: nil)
         fmResult?.next()
@@ -112,10 +112,31 @@ class GoalHelper: NSObject {
         insertSql += value
         println("\(insertSql)")
         var result = userDatabase?.executeUpdate(insertSql, withParameterDictionary: nil)
+        completeHandler(result: result!)
         if result == true
         {
             println("save to data base ok")
             numberOfData++
         }
+    }
+    
+    func retrieveData()->[Goal]
+    {
+        var queryResult = userDatabase?.executeQuery("SELECT id,name,description,date,type,progress FROM myGoals", withParameterDictionary: nil)
+        var results:[Goal] = []
+        while queryResult?.next() == true
+        {
+            let id = queryResult?.intForColumn("id")
+            let name = queryResult?.stringForColumn("name")
+            let description = queryResult?.stringForColumn("description")
+            let date = queryResult?.stringForColumn("date")
+            let a = Int(queryResult!.intForColumn("type"))
+            let type:GoalType = GoalType(rawValue: a)!
+            let goalProgress = CGFloat(queryResult!.doubleForColumn("progress"))
+            var goal:Goal = Goal(goalID: Int(id!), goldType: type, goalDes: description!, goalName: name!, creationDate: date!, progress: goalProgress)
+            results.append(goal)
+        }
+        numberOfData = goals.count
+        return results
     }
 }

@@ -7,12 +7,16 @@
 //
 
 import UIKit
-
+protocol SaveSuccessDelegate
+{
+    func saveGoalSuccess()
+}
 class AddNewGoalViewController: UIViewController,DidSelectGoalTypeDelegate {
 
     @IBOutlet weak var typeButton: UIButton!
     @IBOutlet weak var goalDescriptionTextField: UITextField!
     @IBOutlet weak var goalNameTextField: UITextField!
+    var delegate:SaveSuccessDelegate?
     var goalName:String?
     var goalDescription:String?
     var goalType:GoalType?
@@ -48,7 +52,14 @@ class AddNewGoalViewController: UIViewController,DidSelectGoalTypeDelegate {
             else
             {
                 let goal = Goal(goalID: GoalHelper.sharedInstance().numberOfData ,goldType: goalType!, goalDes: goalDescriptionTextField.text, goalName: goalNameTextField.text, creationDate: Helper.dateToString(), progress: 0.0)
-                GoalHelper.sharedInstance().saveGoalToDatabase(goal)
+                GoalHelper.sharedInstance().saveGoalToDatabase(goal, completeHandler: {(result) in
+                    if result == true
+                    {
+                        self.dismissViewControllerAnimated(true, completion: {
+                            self.delegate!.saveGoalSuccess()
+                        })
+                    }
+                })
             }
         }
         else

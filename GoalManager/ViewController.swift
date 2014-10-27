@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
+class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate,SaveSuccessDelegate
 {
     @IBOutlet weak var tableView: UITableView!
     var goals:[Goal] = []
@@ -18,7 +18,7 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
         goals = GoalHelper.sharedInstance().goals
         
         self.title = "My Goals"
-        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        //tableView.registerClass(GoalInfoCell.self, forCellReuseIdentifier: "Cell")
         // Do any additional setup after loading the view, typically from a nib.
     }
     
@@ -38,14 +38,20 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as UITableViewCell
-
-        cell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+        var cell = tableView.dequeueReusableCellWithIdentifier("Cell") as? GoalInfoCell
+//        if cell == nil
+//        {
+//            cell = GoalInfoCell(style: UITableViewCellStyle.Subtitle, reuseIdentifier: "Cell")
+//        }
         let goal = goals[indexPath.row] as Goal
-        cell.textLabel.text = goal.goalName
-        cell.detailTextLabel?.text = goal.goalDescription
+        cell?.goalDesLabel.text = goal.goalDescription;
+        cell?.goalNameLabel.text = goal.goalName
         //println("\(goal.goalDescription)")
-        return cell
+        return cell!
+    }
+    
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return 71.0
     }
     
     override func didReceiveMemoryWarning()
@@ -53,7 +59,23 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "Add"
+        {
+            let destinationVC = segue.destinationViewController as UINavigationController
+            var addVC = destinationVC.viewControllers.first as AddNewGoalViewController
+            addVC.delegate = self
+        }
+    }
+    
+    func saveGoalSuccess() {
+        println("refresh")
+        
+            self.goals = GoalHelper.sharedInstance().retrieveData()
+            dispatch_async(dispatch_get_main_queue(), {
+                self.tableView.reloadData()
+            })
+    }
 }
 
