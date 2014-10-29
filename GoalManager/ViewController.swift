@@ -11,12 +11,11 @@ import UIKit
 class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate,SaveSuccessDelegate
 {
     @IBOutlet weak var tableView: UITableView!
-    var goals:[Goal] = []
+    var goals = [GoalType:[Goal]]()
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        goals = GoalHelper.sharedInstance().goals
-        
+        //goals = GoalHelper.sharedInstance().goals
         self.title = "My Goals"
         //tableView.registerClass(GoalInfoCell.self, forCellReuseIdentifier: "Cell")
         // Do any additional setup after loading the view, typically from a nib.
@@ -29,12 +28,39 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
     @IBAction func addNewGoal(sender: AnyObject) {
     }
     
+    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        var keys = [GoalType]()
+        var dics = GoalHelper.sharedInstance().goalsDic
+        for (key ,arr) in dics
+        {
+            keys.append(key)
+        }
+        let type = keys[section]
+        return type.toString()
+    }
+    
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return goals.count
+        var goalsInTypes = [Goal]()
+        var keys = [GoalType]()
+        var dics = GoalHelper.sharedInstance().goalsDic
+        for (key ,arr) in dics
+        {
+            keys.append(key)
+        }
+        let type = keys[section]
+        if let g = dics[type]
+        {
+            return g.count
+        }
+        else
+        {
+            return 0
+        }
+        //return goalsInTypes.count
     }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 1
+        return GoalHelper.sharedInstance().goalsDic.count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -43,10 +69,27 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
 //        {
 //            cell = GoalInfoCell(style: UITableViewCellStyle.Subtitle, reuseIdentifier: "Cell")
 //        }
-        let goal = goals[indexPath.row] as Goal
-        cell?.goalDesLabel.text = goal.goalDescription;
-        cell?.goalNameLabel.text = goal.goalName
-        //println("\(goal.goalDescription)")
+        var dics = GoalHelper.sharedInstance().goalsDic
+        var keys = [GoalType]()
+        for (key ,arr) in dics
+        {
+            keys.append(key)
+        }
+        let type = keys[indexPath.section]
+        if let g = dics[type]
+        {
+            let goal = g[indexPath.row] as Goal
+            cell?.goalDesLabel.text = goal.goalDescription;
+            cell?.goalNameLabel.text = goal.goalName
+            //println("\(goal.goalDescription)")
+            return cell!
+        }
+//        goalsInTypes = GoalHelper.sharedInstance().goalsDic["\(indexPath.section)"]
+//        let goal = goalsInTypes[indexPath.row] as Goal
+//        cell?.goalDesLabel.text = goal.goalDescription;
+//        cell?.goalNameLabel.text = goal.goalName
+//        //println("\(goal.goalDescription)")
+//        return cell!
         return cell!
     }
     

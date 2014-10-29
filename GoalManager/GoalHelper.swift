@@ -11,7 +11,41 @@ class GoalHelper: NSObject {
     var userDatabase:FMDatabase?
     var dbExisted:Bool?
     var numberOfData:Int = 0
-    var goals:[Goal] = []
+    var goals:[Goal] = [Goal]()
+    var dailyGoals:[Goal] = [Goal]()
+    var monthlyGoals:[Goal] = [Goal]()
+    var weeklyGoals:[Goal] = [Goal]()
+    var one_timeGoals:[Goal] = [Goal]()
+    var progresiveGoals:[Goal] = [Goal]()
+    var goalsDic = [GoalType:[Goal]]()
+    var numberOfTypes:Int
+    {
+        get
+        {
+            var initial = 0
+            if dailyGoals.count > 0
+            {
+                initial++
+            }
+            if weeklyGoals.count > 0
+            {
+                initial++
+            }
+            if monthlyGoals.count > 0
+            {
+                initial++
+            }
+            if one_timeGoals.count > 0
+            {
+                initial++
+            }
+            if progresiveGoals.count > 0
+            {
+                initial++
+            }
+            return initial
+        }
+    }
     class func sharedInstance()->GoalHelper
     {
         struct qzSingle{
@@ -76,10 +110,43 @@ class GoalHelper: NSObject {
                         let type:GoalType = GoalType(rawValue: a)!
                         let goalProgress = CGFloat(queryResult!.doubleForColumn("progress"))
                         var goal:Goal = Goal(goalID: Int(id!), goldType: type, goalDes: description!, goalName: name!, creationDate: date!, progress: goalProgress)
+                        switch type
+                        {
+                            case .Daily:
+                            dailyGoals.append(goal)
+                            case .Weekly:
+                            weeklyGoals.append(goal)
+                            case .Monthly:
+                            monthlyGoals.append(goal)
+                            case .OneTime:
+                            one_timeGoals.append(goal)
+                            case .Progress:
+                            progresiveGoals.append(goal)
+                        }
                         goals.append(goal)
                     }
+                    if dailyGoals.count > 0
+                    {
+                        goalsDic[.Daily] = dailyGoals
+                    }
+                    if weeklyGoals.count > 0
+                    {
+                        goalsDic[.Weekly] = weeklyGoals
+                    }
+                    if monthlyGoals.count > 0
+                    {
+                        goalsDic[.Monthly] = monthlyGoals
+                    }
+                    if one_timeGoals.count > 0
+                    {
+                        goalsDic[.OneTime] = one_timeGoals
+                    }
+                    if progresiveGoals.count > 0
+                    {
+                        goalsDic[.Progress] = progresiveGoals
+                    }
                     numberOfData = goals.count
-                    println("\(goals.count)")
+                    //println("\(goalsInTypes.count)")
                 }
                 else
                 {
@@ -120,10 +187,16 @@ class GoalHelper: NSObject {
         }
     }
     
-    func retrieveData()->[Goal]
+    func retrieveData()->[GoalType:[Goal]]
     {
         var queryResult = userDatabase?.executeQuery("SELECT id,name,description,date,type,progress FROM myGoals", withParameterDictionary: nil)
-        var results:[Goal] = []
+        var goals:[Goal] = [Goal]()
+        var dailyGoals:[Goal] = [Goal]()
+        var monthlyGoals:[Goal] = [Goal]()
+        var weeklyGoals:[Goal] = [Goal]()
+        var one_timeGoals:[Goal] = [Goal]()
+        var progresiveGoals:[Goal] = [Goal]()
+        var goalsDic = [GoalType:[Goal]]()
         while queryResult?.next() == true
         {
             let id = queryResult?.intForColumn("id")
@@ -134,9 +207,45 @@ class GoalHelper: NSObject {
             let type:GoalType = GoalType(rawValue: a)!
             let goalProgress = CGFloat(queryResult!.doubleForColumn("progress"))
             var goal:Goal = Goal(goalID: Int(id!), goldType: type, goalDes: description!, goalName: name!, creationDate: date!, progress: goalProgress)
-            results.append(goal)
+            //results.append(goal)
+            switch type
+            {
+            case .Daily:
+                dailyGoals.append(goal)
+            case .Weekly:
+                weeklyGoals.append(goal)
+            case .Monthly:
+                monthlyGoals.append(goal)
+            case .OneTime:
+                one_timeGoals.append(goal)
+            case .Progress:
+                progresiveGoals.append(goal)
+            }
+            goals.append(goal)
         }
+        if dailyGoals.count > 0
+        {
+            goalsDic[.Daily] = dailyGoals
+        }
+        if weeklyGoals.count > 0
+        {
+            goalsDic[.Weekly] = weeklyGoals
+        }
+        if monthlyGoals.count > 0
+        {
+            goalsDic[.Monthly] = monthlyGoals
+        }
+        if one_timeGoals.count > 0
+        {
+            goalsDic[.OneTime] = one_timeGoals
+        }
+        if progresiveGoals.count > 0
+        {
+            goalsDic[.Progress] = progresiveGoals
+        }
+        //println("\(goalsDic)")
+        self.goalsDic = goalsDic
         numberOfData = goals.count
-        return results
+        return goalsDic
     }
 }
