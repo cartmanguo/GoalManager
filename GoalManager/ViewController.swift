@@ -12,6 +12,7 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
 {
     @IBOutlet weak var tableView: UITableView!
     var goals = [GoalType:[Goal]]()
+    var selectedGoal:Goal?
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -23,6 +24,20 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
     
    override func viewWillAppear(animated: Bool) {
         //goals = GoalHelper.sharedInstance().goals
+    }
+    
+    func leftButtons()->[UIButton]
+    {
+        var buttons = [UIButton]()
+        var completeButton = UIButton.buttonWithType(.Custom) as UIButton
+        completeButton.backgroundColor = UIColor.greenColor()
+        completeButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        completeButton.setTitle("完成", forState: .Normal)
+        buttons.append(completeButton)
+//        var btn = UIButton.buttonWithType(.Custom) as UIButton
+//        btn.backgroundColor = UIColor.orangeColor()
+
+        return buttons
     }
     
     @IBAction func addNewGoal(sender: AnyObject) {
@@ -64,7 +79,7 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCellWithIdentifier("Cell") as? GoalInfoCell
+        var cell = tableView.dequeueReusableCellWithIdentifier("Cell") as? SWTableViewCell
 //        if cell == nil
 //        {
 //            cell = GoalInfoCell(style: UITableViewCellStyle.Subtitle, reuseIdentifier: "Cell")
@@ -79,8 +94,9 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
         if let g = dics[type]
         {
             let goal = g[indexPath.row] as Goal
-            cell?.goalDesLabel.text = goal.goalDescription;
-            cell?.goalNameLabel.text = goal.goalName
+            cell?.textLabel.text = goal.goalDescription;
+            cell?.detailTextLabel?.text = goal.goalName
+            cell?.leftUtilityButtons = leftButtons()
             //println("\(goal.goalDescription)")
             return cell!
         }
@@ -94,7 +110,47 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 71.0
+        return 50.0
+    }
+    
+    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        var dics = GoalHelper.sharedInstance().goalsDic
+        var keys = [GoalType]()
+        for (key ,arr) in dics
+        {
+            keys.append(key)
+        }
+        let type = keys[indexPath.section]
+        if let g = dics[type]
+        {
+            let goal = g[indexPath.row] as Goal
+            GoalHelper.sharedInstance().deleteGoalFromDatabase(goal, completeHandler: {(result) in
+                if result == true
+                {
+                    self.tableView.reloadData()
+                }
+            })
+        }
+    }
+    
+    func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
+        return .Delete
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        var dics = GoalHelper.sharedInstance().goalsDic
+        var keys = [GoalType]()
+        for (key ,arr) in dics
+        {
+            keys.append(key)
+        }
+        let type = keys[indexPath.section]
+        if let g = dics[type]
+        {
+            let goal = g[indexPath.row] as Goal
+            selectedGoal = goal
+            self .performSegueWithIdentifier("Detail", sender: nil)
+        }
     }
     
     override func didReceiveMemoryWarning()
@@ -109,6 +165,11 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
             let destinationVC = segue.destinationViewController as UINavigationController
             var addVC = destinationVC.viewControllers.first as AddNewGoalViewController
             addVC.delegate = self
+        }
+        else if segue.identifier == "Detail"
+        {
+            var goalDetailVC = segue.destinationViewController as GoalDetailViewController
+            goalDetailVC.goal = selectedGoal
         }
     }
     

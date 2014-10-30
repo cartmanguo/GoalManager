@@ -187,6 +187,18 @@ class GoalHelper: NSObject {
         }
     }
     
+    func deleteGoalFromDatabase(goal:Goal,completeHandler:(exeResult:Bool)->Void)
+    {
+        let id = goal.id
+        let deleteSql = "DELETE FROM myGoals Where id=\(id)"
+        var result = userDatabase?.executeUpdate(deleteSql, withParameterDictionary: nil)
+        if let rt = result
+        {
+            retrieveData()
+            completeHandler(exeResult: rt)
+        }
+    }
+    
     func retrieveData()->[GoalType:[Goal]]
     {
         var queryResult = userDatabase?.executeQuery("SELECT id,name,description,date,type,progress FROM myGoals", withParameterDictionary: nil)

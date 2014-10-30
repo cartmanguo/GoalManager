@@ -6,3 +6,4 @@
 //  Copyright (c) 2014年 Alpha. All rights reserved.
 //
 #import "FMDB.h"
+#import "SWTableViewCell.h"
