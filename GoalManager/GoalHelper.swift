@@ -95,6 +95,19 @@ class GoalHelper: NSObject {
             }
             else
             {
+                if isTableExisted("results")
+                {
+                    
+                }
+                else
+                {
+                    let sqlCreate = "CREATE TABLE results (id INTEGER PRIMARY KEY AUTOINCREMENT  NOT NULL,goal_id INTEGER ,date VARCHAR(32),update_date VARCHAR(32),type INTEGER, progress DECIMAL(4,1))";
+                    let result = userDatabase?.executeUpdate(sqlCreate, withParameterDictionary: nil)
+                    if result == true
+                    {
+                        println("create table ok")
+                    }
+                }
                 if isTableExisted("myGoals")
                 {
                     println("existed")
@@ -187,6 +200,28 @@ class GoalHelper: NSObject {
         }
     }
     
+    func updateGoal(goal:Goal)
+    {
+        var now = NSDate()
+        let formatter = NSDateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        var dateString = formatter.stringFromDate(now)
+        var querySql = "SELECT COUNT(goal_id) as 'dataCount' FROM results WHERE goal_id=\(goal.id)"
+        var result = userDatabase?.executeQuery(querySql, withParameterDictionary: nil)
+        while result?.next() == true
+        {
+            var dataCount = result?.intForColumn("count")
+            if dataCount == 0
+            {
+                
+            }
+            else
+            {
+                
+            }
+        }
+    }
+    
     func deleteGoalFromDatabase(goal:Goal,completeHandler:(exeResult:Bool)->Void)
     {
         let id = goal.id
@@ -197,6 +232,11 @@ class GoalHelper: NSObject {
             retrieveData()
             completeHandler(exeResult: rt)
         }
+    }
+    
+    func addEmptyRecord()
+    {
+        
     }
     
     func retrieveData()->[GoalType:[Goal]]

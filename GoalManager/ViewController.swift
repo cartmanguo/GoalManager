@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate,SaveSuccessDelegate
+class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate,SaveSuccessDelegate,SWTableViewCellDelegate
 {
     @IBOutlet weak var tableView: UITableView!
     var goals = [GoalType:[Goal]]()
@@ -170,6 +170,22 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
         {
             var goalDetailVC = segue.destinationViewController as GoalDetailViewController
             goalDetailVC.goal = selectedGoal
+        }
+    }
+    
+    func swipeableTableViewCell(cell: SWTableViewCell!, didTriggerLeftUtilityButtonWithIndex index: Int) {
+        var indexPath:NSIndexPath = tableView.indexPathForCell(cell)!
+        var dics = GoalHelper.sharedInstance().goalsDic
+        var keys = [GoalType]()
+        for (key ,arr) in dics
+        {
+            keys.append(key)
+        }
+        let type = keys[indexPath.section]
+        if let g = dics[type]
+        {
+            let goal = g[indexPath.row] as Goal
+            GoalHelper.sharedInstance().updateGoal(goal)
         }
     }
     
