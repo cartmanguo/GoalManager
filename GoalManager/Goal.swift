@@ -16,6 +16,13 @@ enum GoalType:Int
     case Progress
 }
 
+enum GoalStatus:Int
+{
+    case unFinished = 1
+    case complete
+    case unKnown
+}
+
 extension GoalType
 {
     func toString()->String
@@ -56,5 +63,24 @@ struct Goal
         self.creationDate = creationDate
         self.progress = progress
         self.id = goalID
+    }
+}
+
+struct GoalResult
+{
+    var id:Int
+    var goal_id:Int
+    var goalType:GoalType
+    var creationDate:String
+    //var status:GoalStatus
+    var progress:CGFloat
+    init(id:Int,goalID:Int,goalType:GoalType,
+        creationDate:String,progress:CGFloat)
+    {
+        self.id = id
+        self.goal_id = goalID
+        self.goalType = goalType
+        self.creationDate = creationDate
+        self.progress = progress
     }
 }

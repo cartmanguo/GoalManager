@@ -84,6 +84,7 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
 //        {
 //            cell = GoalInfoCell(style: UITableViewCellStyle.Subtitle, reuseIdentifier: "Cell")
 //        }
+        cell?.delegate = self;
         var dics = GoalHelper.sharedInstance().goalsDic
         var keys = [GoalType]()
         for (key ,arr) in dics
@@ -185,7 +186,8 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
         if let g = dics[type]
         {
             let goal = g[indexPath.row] as Goal
-            GoalHelper.sharedInstance().updateGoal(goal)
+            GoalHelper.sharedInstance().updateGoal(goal, progress: 1.0)
+            cell.hideUtilityButtonsAnimated(true)
         }
     }
     

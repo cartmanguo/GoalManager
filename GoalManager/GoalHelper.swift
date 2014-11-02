@@ -200,7 +200,7 @@ class GoalHelper: NSObject {
         }
     }
     
-    func updateGoal(goal:Goal)
+    func updateGoal(goal:Goal,progress:CGFloat)
     {
         var now = NSDate()
         let formatter = NSDateFormatter()
@@ -210,14 +210,15 @@ class GoalHelper: NSObject {
         var result = userDatabase?.executeQuery(querySql, withParameterDictionary: nil)
         while result?.next() == true
         {
-            var dataCount = result?.intForColumn("count")
-            if dataCount == 0
+            var dataString = Helper.dateToString()
+            var dataCount = Int(result!.intForColumn("count"))
+            var newResult = GoalResult(id: dataCount+1, goalID: goal.id, goalType: goal.goalType, creationDate: dateString, progress: progress)
+            "id INTEGER PRIMARY KEY AUTOINCREMENT  NOT NULL,goal_id INTEGER ,date VARCHAR(32),update_date VARCHAR(32),type INTEGER, progress DECIMAL(4,1))"
+            let insertDataSql = "INSERT INTO results VALUES ('\(dataCount+1)','\(goal.id)','\(goal.creationDate)','\(dateString)','\(goal.goalType.rawValue)','\(progress)')"
+            let result = userDatabase?.executeUpdate(insertDataSql, withParameterDictionary: nil)
+            if result == true
             {
-                
-            }
-            else
-            {
-                
+                println("save ok!")
             }
         }
     }
