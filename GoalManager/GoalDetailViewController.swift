@@ -12,13 +12,15 @@ class GoalDetailViewController: UIViewController, UITableViewDataSource,UITableV
     var goal:Goal?
     var dates:[NSDate] = [NSDate]()
     var formatter = NSDateFormatter()
-
+    var results = [GoalResult]()
     override func viewDidLoad() {
         super.viewDidLoad()
         formatter.dateFormat = "yyyy-MM-dd"
         dates = Helper.getPastDates(goal!)
         println("\(goal?.goalType.toString())")
-
+        GoalHelper.sharedInstance().queryForResults(self.goal!)
+        results = GoalHelper.sharedInstance().queryForResults(self.goal!)
+        println("\(results.count)")
         // Do any additional setup after loading the view.
     }
 
@@ -47,7 +49,7 @@ class GoalDetailViewController: UIViewController, UITableViewDataSource,UITableV
         {
             if goal!.goalType == .Daily
             {
-                return Helper.intervalDaysFromCreationDateToday(goal!)
+                return results.count
             }
         }
         return 1
@@ -75,9 +77,8 @@ class GoalDetailViewController: UIViewController, UITableViewDataSource,UITableV
             cell = tableView.dequeueReusableCellWithIdentifier("TimeCell") as? UITableViewCell
             if goal!.goalType == .Daily
             {
-                let date = dates[indexPath.row] as NSDate
-                                let dateString = formatter.stringFromDate(date)
-                cell?.textLabel.text = dateString
+                let result = results[indexPath.row] as GoalResult
+                cell?.textLabel.text = result.updateDate
             }
         }
         return cell!

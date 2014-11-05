@@ -10,6 +10,7 @@
 		3CADB24721AE39428AAD2488 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FA7AD3BFC34CC5D37BA551C /* libPods.a */; };
 		F52D242919FE2F580082F885 /* GoalInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F52D242819FE2F580082F885 /* GoalInfoCell.swift */; };
 		F52D242B1A01DB8D0082F885 /* GoalDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F52D242A1A01DB8C0082F885 /* GoalDetailViewController.swift */; };
+		F583D2671A0881B3001E1E51 /* UIColor+RGB.swift in Sources */ = {isa = PBXBuildFile; fileRef = F583D2661A0881B2001E1E51 /* UIColor+RGB.swift */; };
 		F5A801EF19F5FA6E00F38D40 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A801EE19F5FA6E00F38D40 /* AppDelegate.swift */; };
 		F5A801F119F5FA6E00F38D40 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A801F019F5FA6E00F38D40 /* ViewController.swift */; };
 		F5A801F419F5FA6E00F38D40 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F5A801F219F5FA6E00F38D40 /* Main.storyboard */; };
@@ -39,6 +40,7 @@
 		E5BCFDEC87BB521B0472BB49 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		F52D242819FE2F580082F885 /* GoalInfoCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalInfoCell.swift; sourceTree = "<group>"; };
 		F52D242A1A01DB8C0082F885 /* GoalDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalDetailViewController.swift; sourceTree = "<group>"; };
+		F583D2661A0881B2001E1E51 /* UIColor+RGB.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+RGB.swift"; sourceTree = "<group>"; };
 		F5A801E919F5FA6E00F38D40 /* GoalManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GoalManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5A801ED19F5FA6E00F38D40 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F5A801EE19F5FA6E00F38D40 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 				F52D242819FE2F580082F885 /* GoalInfoCell.swift */,
 				F5A8020E19F601D000F38D40 /* Goal.swift */,
 				F5A9879619FA5B4E00A65A08 /* Helper.swift */,
+				F583D2661A0881B2001E1E51 /* UIColor+RGB.swift */,
 				F5A8024319F6534B00F38D40 /* GoalHelper.swift */,
 				F5A801F219F5FA6E00F38D40 /* Main.storyboard */,
 				F5A801F519F5FA6E00F38D40 /* Images.xcassets */,
@@ -210,7 +213,7 @@
 				TargetAttributes = {
 					F5A801E819F5FA6E00F38D40 = {
 						CreatedOnToolsVersion = 6.0;
-						DevelopmentTeam = V7L6S57KTH;
+						DevelopmentTeam = HZ59NGURJ9;
 					};
 					F5A801FD19F5FA6E00F38D40 = {
 						CreatedOnToolsVersion = 6.0;
@@ -297,6 +300,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F5A97A3019FA02DA00A65A08 /* TypeSelectViewController.swift in Sources */,
+				F583D2671A0881B3001E1E51 /* UIColor+RGB.swift in Sources */,
 				F52D242B1A01DB8D0082F885 /* GoalDetailViewController.swift in Sources */,
 				F5A9879719FA5B4E00A65A08 /* Helper.swift in Sources */,
 				F5A801F119F5FA6E00F38D40 /* ViewController.swift in Sources */,
@@ -363,7 +367,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: LIU YI (DG82AVEA5T)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: LIU YI (DG82AVEA5T)";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -383,6 +388,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE = "981bd08d-8b9c-4852-b5bb-866e9579d268";
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -405,7 +411,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: LIU YI (DG82AVEA5T)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: LIU YI (DG82AVEA5T)";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -418,6 +425,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PROVISIONING_PROFILE = "981bd08d-8b9c-4852-b5bb-866e9579d268";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -429,11 +437,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Cheng Guo (P88CY8L2F4)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: LIU YI (DG82AVEA5T)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: LIU YI (DG82AVEA5T)";
 				INFOPLIST_FILE = GoalManager/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "981bd08d-8b9c-4852-b5bb-866e9579d268";
 				SWIFT_OBJC_BRIDGING_HEADER = "GoalManager-BridgingHeader.h";
 			};
 			name = Debug;
@@ -444,11 +454,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Cheng Guo (P88CY8L2F4)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: LIU YI (DG82AVEA5T)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: LIU YI (DG82AVEA5T)";
 				INFOPLIST_FILE = GoalManager/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "981bd08d-8b9c-4852-b5bb-866e9579d268";
 				SWIFT_OBJC_BRIDGING_HEADER = "GoalManager-BridgingHeader.h";
 			};
 			name = Release;

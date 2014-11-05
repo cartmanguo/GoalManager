@@ -11,6 +11,7 @@ class GoalHelper: NSObject {
     var userDatabase:FMDatabase?
     var dbExisted:Bool?
     var numberOfData:Int = 0
+    var results = [GoalResult]()
     var goals:[Goal] = [Goal]()
     var dailyGoals:[Goal] = [Goal]()
     var monthlyGoals:[Goal] = [Goal]()
@@ -65,6 +66,7 @@ class GoalHelper: NSObject {
         return goal
     }
     
+    //MARK:- IsExisted
     func isTableExisted(tableName:String)->Bool
     {
         var result = userDatabase?.executeQuery("SELECT count(*) as 'count' FROM sqlite_master WHERE type = 'table' and name = '\(tableName)'", withArgumentsInArray: nil)
@@ -83,6 +85,7 @@ class GoalHelper: NSObject {
         return false
     }
     
+    //MARK:- Create DB
     func createDatabase()
     {
         var docPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true).first as String
@@ -175,6 +178,7 @@ class GoalHelper: NSObject {
 
     }
     
+    //MARK:- Save Goal
     func saveGoalToDatabase(goal:Goal,completeHandler:(result:Bool)->Void)
     {
         var fmResult = userDatabase?.executeQuery("SELECT COUNT(*) FROM SQLITE_MASTER WHERE TYPE='table' AND NAME='myGoals'", withParameterDictionary: nil)
@@ -200,19 +204,20 @@ class GoalHelper: NSObject {
         }
     }
     
+    //MARK:- UPDate Goal
     func updateGoal(goal:Goal,progress:CGFloat)
     {
         var now = NSDate()
         let formatter = NSDateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        formatter.dateFormat = "yyyy-MM-dd"
         var dateString = formatter.stringFromDate(now)
         var querySql = "SELECT COUNT(goal_id) as 'dataCount' FROM results WHERE goal_id=\(goal.id)"
         var result = userDatabase?.executeQuery(querySql, withParameterDictionary: nil)
         while result?.next() == true
         {
             var dataString = Helper.dateToString()
-            var dataCount = Int(result!.intForColumn("count"))
-            var newResult = GoalResult(id: dataCount+1, goalID: goal.id, goalType: goal.goalType, creationDate: dateString, progress: progress)
+            var dataCount = Int(result!.intForColumn("dataCount"))
+            var newResult = GoalResult(id: dataCount+1, goalID: goal.id, goalType: goal.goalType, creationDate: dateString,updateDate:dateString, progress: progress)
             "id INTEGER PRIMARY KEY AUTOINCREMENT  NOT NULL,goal_id INTEGER ,date VARCHAR(32),update_date VARCHAR(32),type INTEGER, progress DECIMAL(4,1))"
             let insertDataSql = "INSERT INTO results VALUES ('\(dataCount+1)','\(goal.id)','\(goal.creationDate)','\(dateString)','\(goal.goalType.rawValue)','\(progress)')"
             let result = userDatabase?.executeUpdate(insertDataSql, withParameterDictionary: nil)
@@ -223,6 +228,27 @@ class GoalHelper: NSObject {
         }
     }
     
+    //MARK:- Check Results
+    func queryForResults(goal:Goal)->[GoalResult]
+    {
+        var querySql = "SELECT * FROM results WHERE goal_id = '\(goal.id)'"
+        var queryResult = userDatabase?.executeQuery(querySql, withParameterDictionary: nil)
+        var results = [GoalResult]()
+        while queryResult?.next() == true
+        {
+            let id = queryResult?.intForColumn("id")
+            let goal_id = queryResult?.intForColumn("goal_id");
+            let date = queryResult?.stringForColumn("date")
+            let update_date = queryResult?.stringForColumn("update_date")
+            let type = GoalType(rawValue: Int(queryResult!.intForColumn("type")))!
+            let progress = CGFloat(queryResult!.doubleForColumn("progress"))
+            var result = GoalResult(id: Int(id!), goalID: Int(goal_id!), goalType: type, creationDate: date!, updateDate:update_date!,progress: progress)
+            results.append(result)
+        }
+        return results
+    }
+    
+    //MARK:- Delete Goal
     func deleteGoalFromDatabase(goal:Goal,completeHandler:(exeResult:Bool)->Void)
     {
         let id = goal.id
@@ -235,11 +261,7 @@ class GoalHelper: NSObject {
         }
     }
     
-    func addEmptyRecord()
-    {
-        
-    }
-    
+    //MARK:- Get Goals
     func retrieveData()->[GoalType:[Goal]]
     {
         var queryResult = userDatabase?.executeQuery("SELECT id,name,description,date,type,progress FROM myGoals", withParameterDictionary: nil)

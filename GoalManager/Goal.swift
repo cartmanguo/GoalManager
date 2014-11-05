@@ -64,6 +64,21 @@ struct Goal
         self.progress = progress
         self.id = goalID
     }
+    func isGoalAvailableToAcheieveAgain()->Bool
+    {
+        let formatter = NSDateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let now = NSDate()
+        let creationDate = formatter.dateFromString(self.creationDate)
+        let interval = now.timeIntervalSinceDate(creationDate!)
+        println("cr:\(interval)")
+        if interval > 86400.0 || self.progress == 0.0
+        {
+            println("available")
+            return true
+        }
+        return false
+    }
 }
 
 struct GoalResult
@@ -72,15 +87,18 @@ struct GoalResult
     var goal_id:Int
     var goalType:GoalType
     var creationDate:String
+    var updateDate:String
+
     //var status:GoalStatus
     var progress:CGFloat
     init(id:Int,goalID:Int,goalType:GoalType,
-        creationDate:String,progress:CGFloat)
+        creationDate:String,updateDate:String,progress:CGFloat)
     {
         self.id = id
         self.goal_id = goalID
         self.goalType = goalType
         self.creationDate = creationDate
         self.progress = progress
+        self.updateDate = updateDate
     }
 }

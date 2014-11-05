@@ -40,6 +40,21 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
         return buttons
     }
     
+    func cancelButton()->[UIButton]
+    {
+        var buttons = [UIButton]()
+        var completeButton = UIButton.buttonWithType(.Custom) as UIButton
+        completeButton.backgroundColor = UIColor.grayColor()
+        completeButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        completeButton.setTitle("撤销", forState: .Normal)
+        buttons.append(completeButton)
+        //        var btn = UIButton.buttonWithType(.Custom) as UIButton
+        //        btn.backgroundColor = UIColor.orangeColor()
+        
+        return buttons
+
+    }
+    
     @IBAction func addNewGoal(sender: AnyObject) {
     }
     
@@ -85,6 +100,7 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
 //            cell = GoalInfoCell(style: UITableViewCellStyle.Subtitle, reuseIdentifier: "Cell")
 //        }
         cell?.delegate = self;
+        cell?.selectionStyle = .None
         var dics = GoalHelper.sharedInstance().goalsDic
         var keys = [GoalType]()
         for (key ,arr) in dics
@@ -95,9 +111,16 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
         if let g = dics[type]
         {
             let goal = g[indexPath.row] as Goal
-            cell?.textLabel.text = goal.goalDescription;
-            cell?.detailTextLabel?.text = goal.goalName
-            cell?.leftUtilityButtons = leftButtons()
+            cell?.textLabel.text = goal.goalName;
+            cell?.detailTextLabel?.text = goal.goalDescription
+            if goal.isGoalAvailableToAcheieveAgain()
+            {
+                cell?.leftUtilityButtons = leftButtons()
+            }
+            else
+            {
+                cell?.leftUtilityButtons = cancelButton()
+            }
             //println("\(goal.goalDescription)")
             return cell!
         }
@@ -148,6 +171,8 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
         let type = keys[indexPath.section]
         if let g = dics[type]
         {
+            var cell = tableView.cellForRowAtIndexPath(indexPath)
+            cell?.selected = false
             let goal = g[indexPath.row] as Goal
             selectedGoal = goal
             self .performSegueWithIdentifier("Detail", sender: nil)
@@ -186,9 +211,22 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
         if let g = dics[type]
         {
             let goal = g[indexPath.row] as Goal
-            GoalHelper.sharedInstance().updateGoal(goal, progress: 1.0)
-            cell.hideUtilityButtonsAnimated(true)
+            if goal.isGoalAvailableToAcheieveAgain()
+            {
+                GoalHelper.sharedInstance().updateGoal(goal, progress: 1.0)
+                cell.contentView.backgroundColor = UIColor(red: CGFloat(82.0/255.0), green: CGFloat(196.0/255.0), blue: CGFloat(255.0/255.0), alpha: CGFloat(1.0))
+                cell.textLabel.textColor = UIColor.whiteColor()
+                cell.detailTextLabel?.textColor = UIColor.whiteColor()
+                
+                self.tableView.reloadData()
+            }
+            else
+            {
+                
+            }
+            
         }
+        cell.hideUtilityButtonsAnimated(true)
     }
     
     func saveGoalSuccess() {
