@@ -199,8 +199,25 @@ class GoalHelper: NSObject {
         completeHandler(result: result!)
         if result == true
         {
-            println("save to data base ok")
             numberOfData++
+            println("save to data base ok:\(numberOfData)")
+            var now = NSDate()
+            let formatter = NSDateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            var dateString = formatter.stringFromDate(now)
+
+            var querySql = "SELECT COUNT(goal_id) as 'dataCount' FROM results"
+            var result = userDatabase?.executeQuery(querySql, withParameterDictionary: nil)
+            while result?.next() == true
+            {
+                var dataCount = Int(result!.intForColumn("dataCount"))
+                let insertDataSql = "INSERT INTO results VALUES (\(dataCount+1),'\(numberOfData)','\(creationDate)','\(dateString)','\(goal.goalType.rawValue)','\(progress)')"
+                let result = userDatabase?.executeUpdate(insertDataSql, withParameterDictionary: nil)
+                if result == true
+                {
+                    println("save ok!")
+                }
+            }
         }
     }
     
@@ -217,13 +234,58 @@ class GoalHelper: NSObject {
         {
             var dataString = Helper.dateToString()
             var dataCount = Int(result!.intForColumn("dataCount"))
-            var newResult = GoalResult(id: dataCount+1, goalID: goal.id, goalType: goal.goalType, creationDate: dateString,updateDate:dateString, progress: progress)
-            "id INTEGER PRIMARY KEY AUTOINCREMENT  NOT NULL,goal_id INTEGER ,date VARCHAR(32),update_date VARCHAR(32),type INTEGER, progress DECIMAL(4,1))"
-            let insertDataSql = "INSERT INTO results VALUES ('\(dataCount+1)','\(goal.id)','\(goal.creationDate)','\(dateString)','\(goal.goalType.rawValue)','\(progress)')"
-            let result = userDatabase?.executeUpdate(insertDataSql, withParameterDictionary: nil)
-            if result == true
+            if dataCount == 0
             {
-                println("save ok!")
+                let insertDataSql = "INSERT INTO results VALUES ('\(dataCount+1)','\(goal.id)','\(goal.creationDate)','\(dateString)','\(goal.goalType.rawValue)','\(progress)')"
+                let result = userDatabase?.executeUpdate(insertDataSql, withParameterDictionary: nil)
+                if result == true
+                {
+                    println("save ok!")
+                }
+            }
+            else
+            {
+                let updateSql = "UPDATE results SET progress = \(progress),update_date = \(dateString) WHERE "
+            }
+        }
+    }
+    
+    func addNewRecordInResults()
+    {
+        
+    }
+    
+    func updateResultsForGoal(goal:Goal,progress:CGFloat)
+    {
+        var now = NSDate()
+        let formatter = NSDateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        var dateString = formatter.stringFromDate(now)
+        
+        var querySql = "SELECT COUNT(goal_id) as 'dataCount' FROM results WHERE goal_id=\(goal.id)"
+        var result = userDatabase?.executeQuery(querySql, withParameterDictionary: nil)
+        while result?.next() == true
+        {
+            var dataString = Helper.dateToString()
+            var dataCount = Int(result!.intForColumn("dataCount"))
+            if dataCount == 0 || goal.isGoalAvailableToAcheieveAgain()
+            {
+                let insertDataSql = "INSERT INTO results VALUES ('\(dataCount+1)','\(goal.id)','\(goal.creationDate)','\(dateString)','\(goal.goalType.rawValue)','\(progress)')"
+                let result = userDatabase?.executeUpdate(insertDataSql, withParameterDictionary: nil)
+                if result == true
+                {
+                    println("save ok!")
+                }
+            }
+            else
+            {
+                    let updateSql = "UPDATE results SET progress = '\(progress)',update_date = '\(dateString)' WHERE id = \(goal.id)"
+                println("\(dateString)")
+                    let result = userDatabase?.executeUpdate(updateSql, withParameterDictionary: nil)
+                    if result == true
+                    {
+                        println("update ok")
+                    }
             }
         }
     }
@@ -252,12 +314,43 @@ class GoalHelper: NSObject {
     func deleteGoalFromDatabase(goal:Goal,completeHandler:(exeResult:Bool)->Void)
     {
         let id = goal.id
-        let deleteSql = "DELETE FROM myGoals Where id=\(id)"
+        var deleteSql = "DELETE FROM myGoals Where id=\(id)"
         var result = userDatabase?.executeUpdate(deleteSql, withParameterDictionary: nil)
         if let rt = result
         {
             retrieveData()
             completeHandler(exeResult: rt)
+        }
+        //also delete the goal in resutls table
+        deleteSql = "DELETE FROM results WHERE goal_id = \(goal.id)"
+        result = userDatabase?.executeUpdate(deleteSql, withParameterDictionary: nil)
+        if result == true
+        {
+            println("delete from results")
+        }
+    }
+    
+    func finishGoal(goal:Goal)
+    {
+        var finishSql = "UPDATE myGoals SET progress = 1.0 WHERE id = \(goal.id)";
+        var result = userDatabase?.executeUpdate(finishSql, withParameterDictionary: nil)
+        if result == true
+        {
+            println("finish")
+            updateResultsForGoal(goal, progress: 1.0)
+            retrieveData()
+        }
+    }
+    
+    func forfeitGoal(goal:Goal)
+    {
+        var finishSql = "UPDATE myGoals SET progress = 0.0 WHERE id = \(goal.id)";
+        var result = userDatabase?.executeUpdate(finishSql, withParameterDictionary: nil)
+        if result == true
+        {
+            println("forfeit")
+            updateResultsForGoal(goal, progress: 0.0)
+            retrieveData()
         }
     }
     

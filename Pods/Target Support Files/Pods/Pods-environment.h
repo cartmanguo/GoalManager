@@ -24,6 +24,12 @@
 #define COCOAPODS_VERSION_MINOR_FMDB_standard 4
 #define COCOAPODS_VERSION_PATCH_FMDB_standard 0
 
+// GBFlatButton
+#define COCOAPODS_POD_AVAILABLE_GBFlatButton
+#define COCOAPODS_VERSION_MAJOR_GBFlatButton 2
+#define COCOAPODS_VERSION_MINOR_GBFlatButton 1
+#define COCOAPODS_VERSION_PATCH_GBFlatButton 0
+
 // SWTableViewCell
 #define COCOAPODS_POD_AVAILABLE_SWTableViewCell
 #define COCOAPODS_VERSION_MAJOR_SWTableViewCell 0

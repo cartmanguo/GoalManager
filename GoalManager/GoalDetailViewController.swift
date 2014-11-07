@@ -20,7 +20,7 @@ class GoalDetailViewController: UIViewController, UITableViewDataSource,UITableV
         println("\(goal?.goalType.toString())")
         GoalHelper.sharedInstance().queryForResults(self.goal!)
         results = GoalHelper.sharedInstance().queryForResults(self.goal!)
-        println("\(results.count)")
+        println("n:\(results.count)")
         // Do any additional setup after loading the view.
     }
 
@@ -41,22 +41,15 @@ class GoalDetailViewController: UIViewController, UITableViewDataSource,UITableV
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0
+        if goal!.goalType == .Daily
         {
-            return 1
-        }
-        else
-        {
-            if goal!.goalType == .Daily
-            {
-                return results.count
-            }
+            return results.count
         }
         return 1
     }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 2
+        return 1
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
@@ -65,20 +58,21 @@ class GoalDetailViewController: UIViewController, UITableViewDataSource,UITableV
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-        var cell:UITableViewCell?
-        if(indexPath.section == 0)
+        var cell:GoalInfoCell?
+        cell = tableView.dequeueReusableCellWithIdentifier("TimeCell") as? GoalInfoCell
+        if goal!.goalType == .Daily
         {
-            cell = tableView.dequeueReusableCellWithIdentifier("Cell") as? UITableViewCell
-            cell?.textLabel.text = goal?.goalName
-            cell?.detailTextLabel?.text = goal?.goalDescription
-        }
-        else
-        {
-            cell = tableView.dequeueReusableCellWithIdentifier("TimeCell") as? UITableViewCell
-            if goal!.goalType == .Daily
+            let result = results[indexPath.row] as GoalResult
+            cell?.textLabel.text = result.updateDate
+            if goal?.progress < 1.0
             {
-                let result = results[indexPath.row] as GoalResult
-                cell?.textLabel.text = result.updateDate
+                cell?.statusButton.tintColor = UIColor.redColor()
+                cell?.statusButton.setTitle("未完成", forState: .Normal)
+            }
+            else
+            {
+                cell?.statusButton.tintColor = UIColor.greenColor()
+                cell?.statusButton.setTitle("已完成", forState: .Normal)
             }
         }
         return cell!

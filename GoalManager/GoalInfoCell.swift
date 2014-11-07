@@ -11,6 +11,7 @@ import UIKit
 class GoalInfoCell: UITableViewCell {
     @IBOutlet weak var goalNameLabel: UILabel!
 
+    @IBOutlet weak var statusButton: GBFlatButton!
     @IBOutlet weak var goalDesLabel: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()

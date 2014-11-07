@@ -113,12 +113,15 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
             let goal = g[indexPath.row] as Goal
             cell?.textLabel.text = goal.goalName;
             cell?.detailTextLabel?.text = goal.goalDescription
-            if goal.isGoalAvailableToAcheieveAgain()
+            if goal.isGoalAvailableToUpdate()
             {
                 cell?.leftUtilityButtons = leftButtons()
             }
             else
             {
+                cell?.contentView.backgroundColor = UIColor(red: CGFloat(82.0/255.0), green: CGFloat(196.0/255.0), blue: CGFloat(255.0/255.0), alpha: CGFloat(1.0))
+                cell?.textLabel.textColor = UIColor.whiteColor()
+                cell?.detailTextLabel?.textColor = UIColor.whiteColor()
                 cell?.leftUtilityButtons = cancelButton()
             }
             //println("\(goal.goalDescription)")
@@ -211,20 +214,26 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
         if let g = dics[type]
         {
             let goal = g[indexPath.row] as Goal
-            if goal.isGoalAvailableToAcheieveAgain()
+            if goal.goalType == .Daily
             {
-                GoalHelper.sharedInstance().updateGoal(goal, progress: 1.0)
-                cell.contentView.backgroundColor = UIColor(red: CGFloat(82.0/255.0), green: CGFloat(196.0/255.0), blue: CGFloat(255.0/255.0), alpha: CGFloat(1.0))
-                cell.textLabel.textColor = UIColor.whiteColor()
-                cell.detailTextLabel?.textColor = UIColor.whiteColor()
-                
-                self.tableView.reloadData()
+                if goal.isGoalAvailableToUpdate()
+                {
+                    GoalHelper.sharedInstance().finishGoal(goal)
+                    cell.contentView.backgroundColor = UIColor(red: CGFloat(82.0/255.0), green: CGFloat(196.0/255.0), blue: CGFloat(255.0/255.0), alpha: CGFloat(1.0))
+                    cell.textLabel.textColor = UIColor.whiteColor()
+                    cell.detailTextLabel?.textColor = UIColor.whiteColor()
+                    self.tableView.reloadData()
+                }
+                else
+                {
+                    GoalHelper.sharedInstance().forfeitGoal(goal)
+                    cell.contentView.backgroundColor = UIColor.whiteColor()
+                    cell.textLabel.textColor = UIColor.blackColor()
+                    cell.detailTextLabel?.textColor = UIColor.lightGrayColor()
+                    self.tableView.reloadData()
+
+                }
             }
-            else
-            {
-                
-            }
-            
         }
         cell.hideUtilityButtonsAnimated(true)
     }

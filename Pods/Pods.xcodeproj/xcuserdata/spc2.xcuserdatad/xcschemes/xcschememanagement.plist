@@ -9,6 +9,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Pods-GBFlatButton.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-SWTableViewCell.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -22,17 +27,22 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>1739A96342692D43F970E808</key>
+		<key>12BCD460104AA6DEC49D71B6</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>736455D243C4E8CAA63C87C1</key>
+		<key>85D2EF23C9380DC976D07BA9</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>B7850B4CC1FDD302BB552425</key>
+		<key>85ED0B164DB81DF88DD95ECE</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A28943719960BCA768EAF448</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -72,9 +72,18 @@ struct Goal
         let creationDate = formatter.dateFromString(self.creationDate)
         let interval = now.timeIntervalSinceDate(creationDate!)
         println("cr:\(interval)")
-        if interval > 86400.0 || self.progress == 0.0
+        if interval > 86400.0
         {
             println("available")
+            return true
+        }
+        return false
+    }
+    
+    func isGoalAvailableToUpdate()->Bool
+    {
+        if self.progress == 0.0
+        {
             return true
         }
         return false
