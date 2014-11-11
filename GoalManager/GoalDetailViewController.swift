@@ -64,7 +64,7 @@ class GoalDetailViewController: UIViewController, UITableViewDataSource,UITableV
         {
             let result = results[indexPath.row] as GoalResult
             cell?.textLabel.text = result.updateDate
-            if goal?.progress < 1.0
+            if result.progress < 1.0
             {
                 cell?.statusButton.tintColor = UIColor.redColor()
                 cell?.statusButton.setTitle("未完成", forState: .Normal)

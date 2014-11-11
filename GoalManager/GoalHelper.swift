@@ -104,7 +104,7 @@ class GoalHelper: NSObject {
                 }
                 else
                 {
-                    let sqlCreate = "CREATE TABLE results (id INTEGER PRIMARY KEY AUTOINCREMENT  NOT NULL,goal_id INTEGER ,date VARCHAR(32),update_date VARCHAR(32),type INTEGER, progress DECIMAL(4,1))";
+                    let sqlCreate = "CREATE TABLE results (id INTEGER PRIMARY KEY AUTOINCREMENT  NOT NULL,goal_id INTEGER ,date VARCHAR(32),update_date VARCHAR(32),type INTEGER, progress DECIMAL(4,1),status INTEGER)";
                     let result = userDatabase?.executeUpdate(sqlCreate, withParameterDictionary: nil)
                     if result == true
                     {
@@ -201,23 +201,23 @@ class GoalHelper: NSObject {
         {
             numberOfData++
             println("save to data base ok:\(numberOfData)")
-            var now = NSDate()
-            let formatter = NSDateFormatter()
-            formatter.dateFormat = "yyyy-MM-dd"
-            var dateString = formatter.stringFromDate(now)
-
-            var querySql = "SELECT COUNT(goal_id) as 'dataCount' FROM results"
-            var result = userDatabase?.executeQuery(querySql, withParameterDictionary: nil)
-            while result?.next() == true
-            {
-                var dataCount = Int(result!.intForColumn("dataCount"))
-                let insertDataSql = "INSERT INTO results VALUES (\(dataCount+1),'\(numberOfData)','\(creationDate)','\(dateString)','\(goal.goalType.rawValue)','\(progress)')"
-                let result = userDatabase?.executeUpdate(insertDataSql, withParameterDictionary: nil)
-                if result == true
-                {
-                    println("save ok!")
-                }
-            }
+//            var now = NSDate()
+//            let formatter = NSDateFormatter()
+//            formatter.dateFormat = "yyyy-MM-dd"
+//            var dateString = formatter.stringFromDate(now)
+//
+//            var querySql = "SELECT COUNT(goal_id) as 'dataCount' FROM results"
+//            var result = userDatabase?.executeQuery(querySql, withParameterDictionary: nil)
+//            while result?.next() == true
+//            {
+//                var dataCount = Int(result!.intForColumn("dataCount"))
+//                let insertDataSql = "INSERT INTO results VALUES (\(dataCount+1),'\(numberOfData)','\(creationDate)','\(dateString)','\(goal.goalType.rawValue)','\(progress)')"
+//                let result = userDatabase?.executeUpdate(insertDataSql, withParameterDictionary: nil)
+//                if result == true
+//                {
+//                    println("save ok!")
+//                }
+//            }
         }
     }
     
@@ -255,22 +255,117 @@ class GoalHelper: NSObject {
         
     }
     
-    func updateResultsForGoal(goal:Goal,progress:CGFloat)
+    
+    func isGoalAvailableToAcheieveAgain(goal:Goal)->Bool
+    {
+        let formatter = NSDateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let now = NSDate()
+        let creationDate = formatter.dateFromString(goal.creationDate)
+        let interval = now.timeIntervalSinceDate(creationDate!)
+        var querySql = "SELECT COUNT(goal_id) as 'dataCount' FROM results WHERE goal_id=\(goal.id)"
+        var result = userDatabase?.executeQuery(querySql, withParameterDictionary: nil)
+        var dataCount:Int?
+        while result?.next() == true
+        {
+            dataCount = Int(result!.intForColumn("dataCount"))
+        }
+        println("cr:\(interval)")
+        if interval > 86400.0 || dataCount == 0
+        {
+            println("available")
+            return true
+        }
+        else if interval < 86400 && goal.progress > 0.0
+        {
+            return false
+        }
+        return false
+    }
+
+    func canBeCompletedForGoal(goal:Goal)->Bool
+    {
+        var querySql = "SELECT COUNT(goal_id) as 'dataCount' FROM results WHERE goal_id=\(goal.id)"
+        var result = userDatabase?.executeQuery(querySql, withParameterDictionary: nil)
+        var dataCount:Int?
+        while result?.next() == true
+        {
+            dataCount = Int(result!.intForColumn("dataCount"))
+        }
+        if dataCount == 0
+        {
+            return true
+        }
+
+        var queryForLast = "select * from results where goal_id = \(goal.id) order by id desc limit 1"
+        var results = userDatabase?.executeQuery(queryForLast, withParameterDictionary: nil)
+        while results?.next() == true
+        {
+            let status = GoalStatus(rawValue: Int(results!.intForColumn("status")))!
+            if status == .Unfinished
+            {
+                return true
+            }
+        }
+        return false
+    }
+    
+    func isNewDayForGoal(goal:Goal)->Bool
+    {
+        var querySql = "SELECT COUNT(goal_id) as 'dataCount' FROM results WHERE goal_id=\(goal.id)"
+        var result = userDatabase?.executeQuery(querySql, withParameterDictionary: nil)
+        var dataCount:Int?
+        while result?.next() == true
+        {
+            dataCount = Int(result!.intForColumn("dataCount"))
+        }
+        if dataCount == 0
+        {
+            return true
+        }
+
+        var queryForLast = "select * from results where goal_id = \(goal.id) order by id desc limit 1"
+        var results = userDatabase?.executeQuery(queryForLast, withParameterDictionary: nil)
+        while results?.next() == true
+        {
+            let id = results?.intForColumn("id")
+            let updateDateString = results?.stringForColumn("update_date")
+            var now = NSDate()
+            let formatter = NSDateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            var update_date = formatter.dateFromString(updateDateString!)
+            let status = GoalStatus(rawValue: Int(results!.intForColumn("status")))!
+            var gregorianCalendar = NSCalendar(identifier: NSGregorianCalendar)
+            // Notice the components:NSDayCalendarUnit specifier
+            var components = gregorianCalendar?.components(.DayCalendarUnit, fromDate: update_date!, toDate: now, options: .WrapComponents)
+            let days = components?.day
+            println("d:\(days)")
+            if days >= 1
+            {
+                //one day has passed since the last update
+                return true
+            }
+        }
+        return false
+    }
+    
+    func updateResultsForGoal(goal:Goal,progress:CGFloat,newStatus:GoalStatus)
     {
         var now = NSDate()
         let formatter = NSDateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         var dateString = formatter.stringFromDate(now)
         
-        var querySql = "SELECT COUNT(goal_id) as 'dataCount' FROM results WHERE goal_id=\(goal.id)"
+        var querySql = "SELECT COUNT(goal_id) as 'dataCount' FROM results"
         var result = userDatabase?.executeQuery(querySql, withParameterDictionary: nil)
         while result?.next() == true
         {
+            let s = newStatus.rawValue
             var dataString = Helper.dateToString()
             var dataCount = Int(result!.intForColumn("dataCount"))
-            if dataCount == 0 || goal.isGoalAvailableToAcheieveAgain()
+            if dataCount == 0 || isNewDayForGoal(goal)
             {
-                let insertDataSql = "INSERT INTO results VALUES ('\(dataCount+1)','\(goal.id)','\(goal.creationDate)','\(dateString)','\(goal.goalType.rawValue)','\(progress)')"
+                let insertDataSql = "INSERT INTO results VALUES ('\(dataCount+1)','\(goal.id)','\(goal.creationDate)','\(dateString)','\(goal.goalType.rawValue)','\(progress)','\(s)')"
                 let result = userDatabase?.executeUpdate(insertDataSql, withParameterDictionary: nil)
                 if result == true
                 {
@@ -279,13 +374,20 @@ class GoalHelper: NSObject {
             }
             else
             {
-                    let updateSql = "UPDATE results SET progress = '\(progress)',update_date = '\(dateString)' WHERE id = \(goal.id)"
-                println("\(dateString)")
-                    let result = userDatabase?.executeUpdate(updateSql, withParameterDictionary: nil)
-                    if result == true
+                var sqlForLatestID = "SELECT MAX(id) as 'LatestID' FROM results WHERE goal_id = '\(goal.id)'"
+                var result = userDatabase?.executeQuery(sqlForLatestID, withParameterDictionary: nil);
+                while result?.next() == true
+                {
+                    let latestID = result?.intForColumn("LatestID")
+                    let updateSql = "UPDATE results SET progress = '\(progress)',update_date = '\(dateString)',status='\(s)' WHERE id = \(latestID!)"
+                    println("\(updateSql)")
+                    println("\(dateString)")
+                    var exeResult = userDatabase?.executeUpdate(updateSql, withParameterDictionary: nil)
+                    if exeResult == true
                     {
                         println("update ok")
                     }
+                }
             }
         }
     }
@@ -304,7 +406,9 @@ class GoalHelper: NSObject {
             let update_date = queryResult?.stringForColumn("update_date")
             let type = GoalType(rawValue: Int(queryResult!.intForColumn("type")))!
             let progress = CGFloat(queryResult!.doubleForColumn("progress"))
-            var result = GoalResult(id: Int(id!), goalID: Int(goal_id!), goalType: type, creationDate: date!, updateDate:update_date!,progress: progress)
+            let a = Int(queryResult!.intForColumn("status"))
+            let goalStatus:GoalStatus = GoalStatus(rawValue: a)!
+            var result = GoalResult(id: Int(id!), goalID: Int(goal_id!), goalType: type, creationDate: date!, updateDate:update_date!,progress: progress,status:goalStatus)
             results.append(result)
         }
         return results
@@ -337,7 +441,7 @@ class GoalHelper: NSObject {
         if result == true
         {
             println("finish")
-            updateResultsForGoal(goal, progress: 1.0)
+            updateResultsForGoal(goal, progress: 1.0,newStatus: .Complete)
             retrieveData()
         }
     }
@@ -349,7 +453,7 @@ class GoalHelper: NSObject {
         if result == true
         {
             println("forfeit")
-            updateResultsForGoal(goal, progress: 0.0)
+            updateResultsForGoal(goal, progress: 0.0,newStatus: .Unfinished)
             retrieveData()
         }
     }

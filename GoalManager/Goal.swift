@@ -18,9 +18,9 @@ enum GoalType:Int
 
 enum GoalStatus:Int
 {
-    case unFinished = 1
-    case complete
-    case unKnown
+    case Unfinished = 1
+    case Complete
+    case Unknown
 }
 
 extension GoalType
@@ -55,6 +55,7 @@ struct Goal
     var goalDescription:String
     var creationDate:String
     var progress:CGFloat
+    var canAchieveAgain:Bool?
     init(goalID:Int,goldType:GoalType,goalDes:String,goalName:String,creationDate:String,progress:CGFloat)
     {
         self.goalType = goldType
@@ -64,22 +65,7 @@ struct Goal
         self.progress = progress
         self.id = goalID
     }
-    func isGoalAvailableToAcheieveAgain()->Bool
-    {
-        let formatter = NSDateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        let now = NSDate()
-        let creationDate = formatter.dateFromString(self.creationDate)
-        let interval = now.timeIntervalSinceDate(creationDate!)
-        println("cr:\(interval)")
-        if interval > 86400.0
-        {
-            println("available")
-            return true
-        }
-        return false
-    }
-    
+        
     func isGoalAvailableToUpdate()->Bool
     {
         if self.progress == 0.0
@@ -100,8 +86,9 @@ struct GoalResult
 
     //var status:GoalStatus
     var progress:CGFloat
+    var status:GoalStatus
     init(id:Int,goalID:Int,goalType:GoalType,
-        creationDate:String,updateDate:String,progress:CGFloat)
+        creationDate:String,updateDate:String,progress:CGFloat,status:GoalStatus)
     {
         self.id = id
         self.goal_id = goalID
@@ -109,5 +96,6 @@ struct GoalResult
         self.creationDate = creationDate
         self.progress = progress
         self.updateDate = updateDate
+        self.status = status
     }
 }

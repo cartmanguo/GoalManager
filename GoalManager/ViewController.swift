@@ -113,18 +113,32 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
             let goal = g[indexPath.row] as Goal
             cell?.textLabel.text = goal.goalName;
             cell?.detailTextLabel?.text = goal.goalDescription
-            if goal.isGoalAvailableToUpdate()
+            if GoalHelper.sharedInstance().isNewDayForGoal(goal) == false
             {
-                cell?.leftUtilityButtons = leftButtons()
+                if GoalHelper.sharedInstance().canBeCompletedForGoal(goal)
+                {
+                    cell?.leftUtilityButtons = leftButtons()
+                    cell?.contentView.backgroundColor = UIColor.whiteColor()
+                    cell?.textLabel.textColor = UIColor.blackColor()
+                    cell?.detailTextLabel?.textColor = UIColor.lightGrayColor()
+                }
+                else
+                {
+                    cell?.contentView.backgroundColor = UIColor(red: CGFloat(82.0/255.0), green: CGFloat(196.0/255.0), blue: CGFloat(255.0/255.0), alpha: CGFloat(1.0))
+                    cell?.textLabel.textColor = UIColor.whiteColor()
+                    cell?.detailTextLabel?.textColor = UIColor.whiteColor()
+                    cell?.leftUtilityButtons = cancelButton()
+                }
+
             }
             else
             {
-                cell?.contentView.backgroundColor = UIColor(red: CGFloat(82.0/255.0), green: CGFloat(196.0/255.0), blue: CGFloat(255.0/255.0), alpha: CGFloat(1.0))
-                cell?.textLabel.textColor = UIColor.whiteColor()
-                cell?.detailTextLabel?.textColor = UIColor.whiteColor()
-                cell?.leftUtilityButtons = cancelButton()
+                cell?.leftUtilityButtons = leftButtons()
+                cell?.contentView.backgroundColor = UIColor.whiteColor()
+                cell?.textLabel.textColor = UIColor.blackColor()
+                cell?.detailTextLabel?.textColor = UIColor.lightGrayColor()
             }
-            //println("\(goal.goalDescription)")
+                        //println("\(goal.goalDescription)")
             return cell!
         }
 //        goalsInTypes = GoalHelper.sharedInstance().goalsDic["\(indexPath.section)"]
@@ -216,7 +230,7 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
             let goal = g[indexPath.row] as Goal
             if goal.goalType == .Daily
             {
-                if goal.isGoalAvailableToUpdate()
+                if GoalHelper.sharedInstance().isNewDayForGoal(goal) == true
                 {
                     GoalHelper.sharedInstance().finishGoal(goal)
                     cell.contentView.backgroundColor = UIColor(red: CGFloat(82.0/255.0), green: CGFloat(196.0/255.0), blue: CGFloat(255.0/255.0), alpha: CGFloat(1.0))
@@ -226,13 +240,26 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
                 }
                 else
                 {
-                    GoalHelper.sharedInstance().forfeitGoal(goal)
-                    cell.contentView.backgroundColor = UIColor.whiteColor()
-                    cell.textLabel.textColor = UIColor.blackColor()
-                    cell.detailTextLabel?.textColor = UIColor.lightGrayColor()
-                    self.tableView.reloadData()
+                    if GoalHelper.sharedInstance().canBeCompletedForGoal(goal)
+                    {
+                        GoalHelper.sharedInstance().finishGoal(goal)
+                        cell.contentView.backgroundColor = UIColor(red: CGFloat(82.0/255.0), green: CGFloat(196.0/255.0), blue: CGFloat(255.0/255.0), alpha: CGFloat(1.0))
+                        cell.textLabel.textColor = UIColor.whiteColor()
+                        cell.detailTextLabel?.textColor = UIColor.whiteColor()
+                        self.tableView.reloadData()
+                    }
+                    else
+                    {
+                        GoalHelper.sharedInstance().forfeitGoal(goal)
+                        cell.contentView.backgroundColor = UIColor.whiteColor()
+                        cell.textLabel.textColor = UIColor.blackColor()
+                        cell.detailTextLabel?.textColor = UIColor.lightGrayColor()
+                        self.tableView.reloadData()
+                        
+                    }
 
                 }
+                
             }
         }
         cell.hideUtilityButtonsAnimated(true)
@@ -240,11 +267,10 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
     
     func saveGoalSuccess() {
         println("refresh")
-        
-            self.goals = GoalHelper.sharedInstance().retrieveData()
-            dispatch_async(dispatch_get_main_queue(), {
-                self.tableView.reloadData()
-            })
+        self.goals = GoalHelper.sharedInstance().retrieveData()
+        dispatch_async(dispatch_get_main_queue(), {
+            self.tableView.reloadData()
+        })
     }
 }
 
