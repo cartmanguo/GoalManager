@@ -7,15 +7,25 @@
 //
 
 import UIKit
-
-class GoalInfoCell: UITableViewCell {
+protocol StatusButtonPressedDelegate
+{
+    func buttonPressed(sender:UIButton)
+}
+class GoalInfoCell: UITableViewCell
+{
+    var delegate:StatusButtonPressedDelegate?
     @IBOutlet weak var goalNameLabel: UILabel!
-
     @IBOutlet weak var statusButton: GBFlatButton!
     @IBOutlet weak var goalDesLabel: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
+        statusButton.addTarget(self, action: "statusButtonPressed", forControlEvents: UIControlEvents.TouchUpInside)
         // Initialization code
+    }
+    
+    func statusButtonPressed()
+    {
+        delegate?.buttonPressed(statusButton)
     }
 
     override func setSelected(selected: Bool, animated: Bool) {

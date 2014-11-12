@@ -30,7 +30,7 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
     {
         var buttons = [UIButton]()
         var completeButton = UIButton.buttonWithType(.Custom) as UIButton
-        completeButton.backgroundColor = UIColor.greenColor()
+        completeButton.backgroundColor = UIColor(red: CGFloat(82.0/255.0), green: CGFloat(196.0/255.0), blue: CGFloat(255.0/255.0), alpha: CGFloat(1.0))
         completeButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         completeButton.setTitle("完成", forState: .Normal)
         buttons.append(completeButton)

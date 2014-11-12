@@ -520,4 +520,23 @@ class GoalHelper: NSObject {
         numberOfData = goals.count
         return goalsDic
     }
+    
+    func checkCompleteStatusForGoal(goal:Goal)->(finished:Int,total:Int)
+    {
+        var querySql = "SELECT COUNT(*) as 'dataCount' FROM results WHERE goal_id=\(goal.id)"
+        var dataCount:Int?
+        var finished:Int?
+        var result = userDatabase?.executeQuery(querySql, withParameterDictionary: nil)
+        while result?.next() == true
+        {
+            dataCount = Int(result!.intForColumn("dataCount"))
+        }
+        querySql = "SELECT COUNT(*) as 'finished' FROM results WHERE goal_id=\(goal.id) And status=\(2)"
+        result = userDatabase?.executeQuery(querySql, withParameterDictionary: nil)
+        while result?.next() == true
+        {
+            finished = Int(result!.intForColumn("finished"))
+        }
+        return (finished!,dataCount!)
+    }
 }

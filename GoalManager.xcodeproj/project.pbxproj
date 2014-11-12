@@ -22,6 +22,7 @@
 		F5A97A2E19F9FC9E00A65A08 /* AddNewGoalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A97A2D19F9FC9E00A65A08 /* AddNewGoalViewController.swift */; };
 		F5A97A3019FA02DA00A65A08 /* TypeSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A97A2F19FA02DA00A65A08 /* TypeSelectViewController.swift */; };
 		F5A9879719FA5B4E00A65A08 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A9879619FA5B4E00A65A08 /* Helper.swift */; };
+		F5C1661D1A134DC4006E601E /* PopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = F5C1661C1A134DC4006E601E /* PopoverView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,8 @@
 		F5A97A2D19F9FC9E00A65A08 /* AddNewGoalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddNewGoalViewController.swift; sourceTree = "<group>"; };
 		F5A97A2F19FA02DA00A65A08 /* TypeSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypeSelectViewController.swift; sourceTree = "<group>"; };
 		F5A9879619FA5B4E00A65A08 /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
+		F5C1661B1A134DC4006E601E /* PopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopoverView.h; sourceTree = "<group>"; };
+		F5C1661C1A134DC4006E601E /* PopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopoverView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +102,7 @@
 			isa = PBXGroup;
 			children = (
 				F5A8024519F65ECC00F38D40 /* GoalManager-BridgingHeader.h */,
+				F5C1661A1A134DC3006E601E /* Vendor */,
 				F5A801EB19F5FA6E00F38D40 /* GoalManager */,
 				F5A8020119F5FA6E00F38D40 /* GoalManagerTests */,
 				F5A801EA19F5FA6E00F38D40 /* Products */,
@@ -160,6 +164,15 @@
 				F5A8020319F5FA6E00F38D40 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F5C1661A1A134DC3006E601E /* Vendor */ = {
+			isa = PBXGroup;
+			children = (
+				F5C1661B1A134DC4006E601E /* PopoverView.h */,
+				F5C1661C1A134DC4006E601E /* PopoverView.m */,
+			);
+			path = Vendor;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -306,6 +319,7 @@
 				F5A801F119F5FA6E00F38D40 /* ViewController.swift in Sources */,
 				F5A8020F19F601D000F38D40 /* Goal.swift in Sources */,
 				F52D242919FE2F580082F885 /* GoalInfoCell.swift in Sources */,
+				F5C1661D1A134DC4006E601E /* PopoverView.m in Sources */,
 				F5A8024419F6534C00F38D40 /* GoalHelper.swift in Sources */,
 				F5A801EF19F5FA6E00F38D40 /* AppDelegate.swift in Sources */,
 				F5A97A2E19F9FC9E00A65A08 /* AddNewGoalViewController.swift in Sources */,
